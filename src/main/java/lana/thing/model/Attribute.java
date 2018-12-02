@@ -1,0 +1,58 @@
+package lana.thing.model;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import javax.persistence.*;
+import java.util.List;
+
+@Entity
+@Table(name = "attribute")
+@JsonIgnoreProperties(value = {"things"})
+public class Attribute {
+    @Id
+    @GeneratedValue
+    private int id;
+
+    private String name;
+
+    private String description;
+
+    @OneToMany(mappedBy = "mainAttribute")
+    private List<Thing> things;
+
+    public Attribute() {
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+
+    public List<Thing> getThings() {
+        return things;
+    }
+
+
+    public void setThings(List<Thing> things) {
+        this.things = things;
+    }
+}
