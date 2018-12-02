@@ -14,6 +14,11 @@ public class Thing {
 
     private String name;
 
+    private String description;
+
+    //TODO: make new model Generic
+    private String generic;
+
     @ManyToOne
     @JoinColumn
     @JsonDeserialize(using = AttributeHandle.class)
@@ -44,5 +49,21 @@ public class Thing {
 
     public void setMainAttribute(Attribute mainAttribute) {
         this.mainAttribute = mainAttribute;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getGeneric() {
+        return generic;
+    }
+
+    public void setGeneric(String generic) {
+        this.generic = generic;
     }
 }

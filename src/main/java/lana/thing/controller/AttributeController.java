@@ -89,8 +89,7 @@ public class AttributeController {
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
-                        //TODO: return something else
-                        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
                     }
                 }
             }
