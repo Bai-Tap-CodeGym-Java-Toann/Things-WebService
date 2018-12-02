@@ -71,7 +71,7 @@ public class ThingController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         // iterate through all methods of Thing.class
-        for (Method method : Thing.class.getMethods()) {
+        for (Method method : Thing.class.getDeclaredMethods()) {
             //findGetter
             if (method.getName().matches("^(get).+$")) {
                 Class returnedClass = method.getReturnType();
@@ -80,7 +80,7 @@ public class ThingController {
                     Object returnedObject = method.invoke(patchThing);
                     if (returnedObject != null) {
                         String fieldName = method.getName().substring(3);
-                        Method setter = Thing.class.getMethod("set" + fieldName, returnedClass);
+                        Method setter = Thing.class.getDeclaredMethod("set" + fieldName,returnedClass);
                         //invoke setter form thing
                         setter.invoke(thing, returnedClass.cast(returnedObject));
                     }
