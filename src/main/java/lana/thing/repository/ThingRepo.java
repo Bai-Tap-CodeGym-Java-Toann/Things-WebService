@@ -9,5 +9,5 @@ public interface ThingRepo extends CrudRepository<Thing, Integer> {
     @Override
     List<Thing> findAll();
 
-    List<Thing> findAllByMainAttribute_Id(int id);
+    List<Thing> findAllByAttribute_Id(int id);
 }

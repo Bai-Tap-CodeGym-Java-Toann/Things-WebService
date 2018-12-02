@@ -25,7 +25,7 @@ public class ThingServiceImpl implements ThingService {
 
     @Override
     public List<Thing> findByAttribute(int attributeId) {
-        return thingRepo.findAllByMainAttribute_Id(attributeId);
+        return thingRepo.findAllByAttribute_Id(attributeId);
     }
 
     @Override

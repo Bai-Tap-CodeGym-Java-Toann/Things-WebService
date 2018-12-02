@@ -17,7 +17,7 @@ public class Attribute {
 
     private String description;
 
-    @OneToMany(mappedBy = "mainAttribute")
+    @OneToMany(mappedBy = "attribute")
     private List<Thing> things;
 
     public Attribute() {

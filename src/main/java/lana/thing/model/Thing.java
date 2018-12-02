@@ -22,7 +22,7 @@ public class Thing {
     @ManyToOne
     @JoinColumn
     @JsonDeserialize(using = AttributeHandle.class)
-    private Attribute mainAttribute;
+    private Attribute attribute;
 
     public Thing() {
     }
@@ -43,12 +43,12 @@ public class Thing {
         this.name = name;
     }
 
-    public Attribute getMainAttribute() {
-        return mainAttribute;
+    public Attribute getAttribute() {
+        return attribute;
     }
 
-    public void setMainAttribute(Attribute mainAttribute) {
-        this.mainAttribute = mainAttribute;
+    public void setAttribute(Attribute attribute) {
+        this.attribute = attribute;
     }
 
     public String getDescription() {
