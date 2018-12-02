@@ -1,4 +1,5 @@
 package lana.thing.model;
+
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lana.thing.model.deserializer.AttributeHandle;
 

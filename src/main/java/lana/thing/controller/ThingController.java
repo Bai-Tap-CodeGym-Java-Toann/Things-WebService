@@ -80,7 +80,7 @@ public class ThingController {
                     if (returnedObject != null) {
                         String fieldName = method.getName().substring(3);
                         Class returnedClass = method.getReturnType();
-                        Method setter = Thing.class.getDeclaredMethod("set" + fieldName,returnedClass);
+                        Method setter = Thing.class.getDeclaredMethod("set" + fieldName, returnedClass);
                         //invoke setter form thing
                         setter.invoke(thing, returnedClass.cast(returnedObject));
                     }
@@ -100,6 +100,7 @@ public class ThingController {
         if (thingService.findOne(id) == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        thingService.delete(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

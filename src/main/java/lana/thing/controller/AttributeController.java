@@ -85,7 +85,7 @@ public class AttributeController {
                             String fieldName = method.getName().substring(3);
                             Class returnedType = method.getReturnType();
                             Method setter = Attribute.class.getDeclaredMethod("set" + fieldName, returnedType);
-                            setter.invoke(attribute,returnedType.cast(returnedObject));
+                            setter.invoke(attribute, returnedType.cast(returnedObject));
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
