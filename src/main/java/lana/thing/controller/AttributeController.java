@@ -1,6 +1,7 @@
 package lana.thing.controller;
 
 import lana.thing.model.Attribute;
+import lana.thing.model.Thing;
 import lana.thing.service.AttributeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -25,6 +26,19 @@ public class AttributeController {
     }
 
     //=============================================
+    @GetMapping("/{id}/things")
+    public ResponseEntity<List<Thing>> getAllAttributeThings(@PathVariable int id) {
+        Attribute attribute = attributeService.findOne(id);
+        if (attribute != null) {
+            List<Thing> things = attribute.getThings();
+            if (things.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(things, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
     @GetMapping
     public ResponseEntity<List<Attribute>> getAllAttribute() {
         List<Attribute> attributes = attributeService.findAll();
