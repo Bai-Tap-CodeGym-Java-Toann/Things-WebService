@@ -10,11 +10,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
-@RequestMapping(path = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/api/attributes", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AttributeController {
     private AttributeService attributeService;
 
@@ -23,7 +24,8 @@ public class AttributeController {
         this.attributeService = attributeService;
     }
 
-    @GetMapping("/attributes")
+    //=============================================
+    @GetMapping
     public ResponseEntity<List<Attribute>> getAllAttribute() {
         List<Attribute> attributes = attributeService.findAll();
         if (attributes.isEmpty()) {
@@ -32,13 +34,69 @@ public class AttributeController {
         return new ResponseEntity<>(attributes, HttpStatus.OK);
     }
 
-    @PostMapping("/attributes")
+    @GetMapping("/{id}")
+    public ResponseEntity<Attribute> getOneAttribute(@PathVariable int id) {
+        Attribute attribute = attributeService.findOne(id);
+        if (attribute != null) {
+            return new ResponseEntity<>(attribute, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @PostMapping
     public ResponseEntity<Attribute> createAttribute(@RequestBody Attribute newAttribute,
                                                      UriComponentsBuilder uriComponentsBuilder) {
         attributeService.save(newAttribute);
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(uriComponentsBuilder.path("/attributes/" + newAttribute.getId()).build().toUri());
         return new ResponseEntity<>(newAttribute, headers, HttpStatus.CREATED);
+    }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteAttribute(@PathVariable int id) {
+        if (attributeService.findOne(id) != null) {
+            attributeService.delete(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Attribute> updateAttribute(@PathVariable int id,
+                                                     @RequestBody Attribute attribute) {
+        if (attributeService.findOne(id) != null) {
+            attribute.setId(id);
+            attributeService.save(attribute);
+            return new ResponseEntity<>(attribute, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @PatchMapping("/{id}")
+    private ResponseEntity<Attribute> pacthAttribute(@PathVariable int id,
+                                                     @RequestBody Attribute patch) {
+        Attribute attribute = attributeService.findOne(id);
+        if (attribute != null) {
+            for (Method method : Attribute.class.getDeclaredMethods()) {
+                if (method.getName().matches("^(get).+$")) {
+                    try {
+                        Object returnedObject = method.invoke(patch);
+                        if (returnedObject != null) {
+                            String fieldName = method.getName().substring(3);
+                            Class returnedType = method.getReturnType();
+                            Method setter = Attribute.class.getDeclaredMethod("set" + fieldName, returnedType);
+                            setter.invoke(attribute,returnedType.cast(returnedObject));
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        //TODO: return something else
+                        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                    }
+                }
+            }
+            attributeService.save(attribute);
+            return new ResponseEntity<>(attribute, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

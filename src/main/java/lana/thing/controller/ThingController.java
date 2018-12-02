@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
-@RequestMapping(path = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/api/things", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ThingController {
     private ThingService thingService;
 
@@ -25,7 +25,7 @@ public class ThingController {
     }
 
     //====================================
-    @GetMapping("/things")
+    @GetMapping
     public ResponseEntity<List<Thing>> getAllThing() {
         List<Thing> things = thingService.findAll();
         if (things.isEmpty()) {
@@ -34,7 +34,7 @@ public class ThingController {
         return new ResponseEntity<>(things, HttpStatus.OK);
     }
 
-    @GetMapping("/things/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Thing> getOneThing(@PathVariable int id) {
         Thing foundedThing = thingService.findOne(id);
         if (foundedThing != null) {
@@ -43,7 +43,7 @@ public class ThingController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping("/things")
+    @PostMapping
     public ResponseEntity<Thing> createThing(@RequestBody Thing newThing,
                                              UriComponentsBuilder uriComponentsBuilder) {
         thingService.save(newThing);
@@ -52,7 +52,7 @@ public class ThingController {
         return new ResponseEntity<>(newThing, headers, HttpStatus.CREATED);
     }
 
-    @PutMapping("/things/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Thing> updateThing(@RequestBody Thing updatedThing,
                                              @PathVariable int id) {
         if (thingService.findOne(id) == null) {
@@ -63,7 +63,7 @@ public class ThingController {
         return new ResponseEntity<>(updatedThing, HttpStatus.OK);
     }
 
-    @PatchMapping("/things/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<Thing> patchThing(@PathVariable int id,
                                             @RequestBody Thing patchThing) {
         Thing thing = thingService.findOne(id);
@@ -74,18 +74,19 @@ public class ThingController {
         for (Method method : Thing.class.getDeclaredMethods()) {
             //findGetter
             if (method.getName().matches("^(get).+$")) {
-                Class returnedClass = method.getReturnType();
                 try {
                     //invoke getter form pathThing
                     Object returnedObject = method.invoke(patchThing);
                     if (returnedObject != null) {
                         String fieldName = method.getName().substring(3);
+                        Class returnedClass = method.getReturnType();
                         Method setter = Thing.class.getDeclaredMethod("set" + fieldName,returnedClass);
                         //invoke setter form thing
                         setter.invoke(thing, returnedClass.cast(returnedObject));
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
+                    //TODO: return something else
                     return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
                 }
             }
@@ -94,7 +95,7 @@ public class ThingController {
         return new ResponseEntity<>(thing, HttpStatus.OK);
     }
 
-    @DeleteMapping("/things/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteThing(@PathVariable int id) {
         if (thingService.findOne(id) == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
