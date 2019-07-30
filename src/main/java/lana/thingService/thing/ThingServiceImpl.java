@@ -5,7 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-@Service
+@Service("thingService")
 public class ThingServiceImpl implements ThingService {
     private final ThingRepo thingRepo;
 
