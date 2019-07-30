@@ -16,13 +16,11 @@ import java.net.URI;
 @CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping(path = "/api/things", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ThingController {
-    private final ObjectMapper objectMapper;
     private final ThingService thingService;
 
     @Autowired
     public ThingController(ThingService thingService, ObjectMapper objectMapper) {
         this.thingService = thingService;
-        this.objectMapper = objectMapper;
     }
 
     //====================================
