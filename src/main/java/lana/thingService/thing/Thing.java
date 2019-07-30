@@ -3,9 +3,15 @@ package lana.thingService.thing;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lana.thingService.attribute.Attribute;
 import lana.thingService.attribute.AttributeHandle;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "thing")
 public class Thing {
@@ -24,47 +30,4 @@ public class Thing {
     @JoinColumn
     @JsonDeserialize(using = AttributeHandle.class)
     private Attribute attribute;
-
-    public Thing() {
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Attribute getAttribute() {
-        return attribute;
-    }
-
-    public void setAttribute(Attribute attribute) {
-        this.attribute = attribute;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getGeneric() {
-        return generic;
-    }
-
-    public void setGeneric(String generic) {
-        this.generic = generic;
-    }
 }
