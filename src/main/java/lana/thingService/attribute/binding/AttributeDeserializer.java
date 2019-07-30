@@ -1,10 +1,12 @@
-package lana.thingService.attribute;
+package lana.thingService.attribute.binding;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import lana.thingService.attribute.Attribute;
+import lana.thingService.attribute.AttributeRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
