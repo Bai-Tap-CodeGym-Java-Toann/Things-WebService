@@ -14,6 +14,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @Table(name = "attribute")
+// prevent infinite loop when convert to json
 @JsonIgnoreProperties(value = {"things"})
 public class Attribute {
     @Id
