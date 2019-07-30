@@ -4,7 +4,6 @@ import lana.thingService.util.objectmapper.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,18 +17,18 @@ import java.net.URI;
 @RequestMapping(path = "/api/things", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ThingController {
     private final ObjectMapper objectMapper;
-    private final ThingService thingService;
+    private final ThingRepo thingRepo;
 
     @Autowired
-    public ThingController(ThingService thingService, ObjectMapper objectMapper) {
-        this.thingService = thingService;
+    public ThingController(ThingRepo thingRepo, ObjectMapper objectMapper) {
+        this.thingRepo = thingRepo;
         this.objectMapper = objectMapper;
     }
 
     //====================================
     @GetMapping
     public ResponseEntity<Page<Thing>> getAllThing(Pageable pageable) {
-        Page<Thing> things = thingService.findAll(pageable);
+        Page<Thing> things = thingRepo.findAll(pageable);
         if (things.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
@@ -38,41 +37,69 @@ public class ThingController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Thing> getOneThing(@PathVariable int id) {
-        try {
-            Thing found = thingService.find(id);
-            return ResponseEntity.ok(found);
-        } catch (ThingNotFoundException e) {
-            return ResponseEntity.notFound().build();
+        Thing foundedThing = thingRepo.findById(id).orElse(null);
+        if (foundedThing != null) {
+            return ResponseEntity.ok(foundedThing);
         }
+        return ResponseEntity.notFound().build();
     }
 
     @PostMapping
     public ResponseEntity<Thing> createThing(@RequestBody Thing thing,
                                              UriComponentsBuilder uriComponentsBuilder) {
-        try {
-            Thing saved = thingService.create(thing);
-            URI uri = uriComponentsBuilder.path("/things/" + saved.getId()).build().toUri();
-            return ResponseEntity.created(uri).body(saved);
-        } catch (ThingExistedException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
+        Thing saved = thingRepo.save(thing);
+        URI uri = uriComponentsBuilder.path("/things/" + saved.getId()).build().toUri();
+        return ResponseEntity.created(uri).body(saved);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Thing> updateThing(@RequestBody Thing thing,
                                              @PathVariable int id) {
-        try {
-            thing.setId(id);
-            Thing updated = thingService.update(thing);
-            return ResponseEntity.ok(updated);
-        } catch (ThingNotFoundException e) {
+        if (thingRepo.findById(id).orElse(null) == null) {
             return ResponseEntity.notFound().build();
         }
+        thing.setId(id);
+        Thing updatedThing = thingRepo.save(thing);
+        return ResponseEntity.ok(updatedThing);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Thing> patchThing(@PathVariable int id,
+                                            @RequestBody Thing patchThing) {
+        Thing thing = thingRepo.findById(id).orElse(null);
+        if (thing == null) {
+            return ResponseEntity.notFound().build();
+        }
+        // iterate through all methods of Thing.class
+        for (Method method : Thing.class.getDeclaredMethods()) {
+            //findGetter
+            if (method.getName().matches("^(get).+$")) {
+                try {
+                    //invoke getter form pathThing
+                    Object returnedObject = method.invoke(patchThing);
+                    if (returnedObject != null) {
+                        String fieldName = method.getName().substring(3);
+                        Class returnedClass = method.getReturnType();
+                        Method setter = Thing.class.getDeclaredMethod("set" + fieldName, returnedClass);
+                        //invoke setter form thing
+                        setter.invoke(thing, returnedClass.cast(returnedObject));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return ResponseEntity.badRequest().build();
+                }
+            }
+        }
+        Thing saved = thingRepo.save(thing);
+        return ResponseEntity.ok(saved);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteThing(@PathVariable int id) {
-        thingService.delete(id);
+        if (thingRepo.findById(id).orElse(null) == null) {
+            return ResponseEntity.notFound().build();
+        }
+        thingRepo.deleteById(id);
         return ResponseEntity.ok().build();
     }
 }
