@@ -27,8 +27,14 @@ public class ThingServiceImpl implements ThingService {
 
     @Override
     public Thing create(Thing thing) throws ThingExistedException {
-        if (thingRepo.existsById(thing.getId())) throw new ThingExistedException();
+        if (isExist(thing)) throw new ThingExistedException();
         return thingRepo.save(thing);
+    }
+
+    private boolean isExist(Thing thing) {
+        Integer thingId = thing.getId();
+        if (thingId == null) return false;
+        return thingRepo.existsById(thingId);
     }
 
     @Override

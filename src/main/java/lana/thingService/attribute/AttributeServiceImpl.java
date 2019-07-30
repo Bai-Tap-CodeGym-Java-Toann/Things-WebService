@@ -26,9 +26,15 @@ public class AttributeServiceImpl implements AttributeService {
     }
 
     @Override
-    public Attribute create(Attribute thing) throws AttributeExistedException {
-        if (attributeRepo.existsById(thing.getId())) throw new AttributeExistedException();
-        return attributeRepo.save(thing);
+    public Attribute create(Attribute attribute) throws AttributeExistedException {
+        if (isExist(attribute)) throw new AttributeExistedException();
+        return attributeRepo.save(attribute);
+    }
+
+    private boolean isExist(Attribute attribute) {
+        Integer attributeId = attribute.getId();
+        if (attributeId == null) return false;
+        return attributeRepo.existsById(attributeId);
     }
 
     @Override
@@ -37,8 +43,8 @@ public class AttributeServiceImpl implements AttributeService {
     }
 
     @Override
-    public Attribute update(Attribute thing) throws AttributeNotFoundException {
-        thing = attributeRepo.findById(thing.getId()).orElseThrow(AttributeNotFoundException::new);
-        return attributeRepo.save(thing);
+    public Attribute update(Attribute attribute) throws AttributeNotFoundException {
+        attribute = attributeRepo.findById(attribute.getId()).orElseThrow(AttributeNotFoundException::new);
+        return attributeRepo.save(attribute);
     }
 }
