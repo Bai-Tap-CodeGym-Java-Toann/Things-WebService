@@ -1,7 +1,8 @@
-package lana.thing.model;
+package lana.thingService.thing;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import lana.thing.model.deserializer.AttributeHandle;
+import lana.thingService.attribute.Attribute;
+import lana.thingService.attribute.AttributeHandle;
 
 import javax.persistence.*;
 

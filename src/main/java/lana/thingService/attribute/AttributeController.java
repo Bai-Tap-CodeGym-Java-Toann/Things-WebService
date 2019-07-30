@@ -1,8 +1,6 @@
-package lana.thing.controller;
+package lana.thingService.attribute;
 
-import lana.thing.model.Attribute;
-import lana.thing.model.Thing;
-import lana.thing.service.AttributeService;
+import lana.thingService.thing.Thing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

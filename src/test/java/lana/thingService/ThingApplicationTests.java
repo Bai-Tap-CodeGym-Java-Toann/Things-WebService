@@ -1,4 +1,4 @@
-package lana.thing;
+package lana.thingService;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

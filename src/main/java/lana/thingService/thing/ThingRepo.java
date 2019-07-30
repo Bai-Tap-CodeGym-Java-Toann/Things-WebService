@@ -1,6 +1,5 @@
-package lana.thing.repository;
+package lana.thingService.thing;
 
-import lana.thing.model.Thing;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

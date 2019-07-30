@@ -1,8 +1,5 @@
-package lana.thing.service.impl;
+package lana.thingService.attribute;
 
-import lana.thing.model.Attribute;
-import lana.thing.repository.AttributeRepo;
-import lana.thing.service.AttributeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

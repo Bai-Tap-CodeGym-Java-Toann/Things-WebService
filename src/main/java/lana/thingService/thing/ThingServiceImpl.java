@@ -1,8 +1,5 @@
-package lana.thing.service.impl;
+package lana.thingService.thing;
 
-import lana.thing.model.Thing;
-import lana.thing.repository.ThingRepo;
-import lana.thing.service.ThingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

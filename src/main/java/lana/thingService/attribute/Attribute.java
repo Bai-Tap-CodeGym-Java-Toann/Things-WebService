@@ -1,6 +1,7 @@
-package lana.thing.model;
+package lana.thingService.attribute;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lana.thingService.thing.Thing;
 
 import javax.persistence.*;
 import java.util.List;

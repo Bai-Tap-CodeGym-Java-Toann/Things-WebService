@@ -1,6 +1,4 @@
-package lana.thing.service;
-
-import lana.thing.model.Thing;
+package lana.thingService.thing;
 
 import java.util.List;
 
