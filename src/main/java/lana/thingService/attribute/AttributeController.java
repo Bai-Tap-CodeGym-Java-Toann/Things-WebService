@@ -1,85 +1,93 @@
-package lana.thingService.attribute;
+package lana.attributeService.attribute;
 
+import lana.thingService.attribute.Attribute;
+import lana.thingService.attribute.AttributeExistedException;
+import lana.thingService.attribute.AttributeNotFoundException;
+import lana.thingService.attribute.AttributeService;
 import lana.thingService.thing.Thing;
+import lana.thingService.thing.ThingRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.List;
+import java.net.URI;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping(path = "/api/attributes", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AttributeController {
-    private AttributeService attributeService;
+    private final AttributeService attributeService;
+    private final ThingRepo thingRepo;
 
     @Autowired
-    public void setUpAttributeController(AttributeService attributeService) {
+    public AttributeController(AttributeService attributeService, ThingRepo thingRepo) {
         this.attributeService = attributeService;
+        this.thingRepo = thingRepo;
     }
 
     //=============================================
     @GetMapping("/{id}/things")
-    public ResponseEntity<List<Thing>> getAllAttributeThings(@PathVariable int id) {
-        Attribute attribute = attributeService.findOne(id);
-        if (attribute != null) {
-            List<Thing> things = attribute.getThings();
-            if (things.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            return new ResponseEntity<>(things, HttpStatus.OK);
+    public ResponseEntity<Page<Thing>> getAllAttributeThings(@PathVariable int id, Pageable pageable) {
+        try {
+            attributeService.find(id);
+            Page<Thing> things = thingRepo.findAllByAttribute_Id(id, pageable);
+            return ResponseEntity.ok(things);
+        } catch (AttributeNotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping
-    public ResponseEntity<List<Attribute>> getAllAttribute() {
-        List<Attribute> attributes = attributeService.findAll();
+    public ResponseEntity<Page<Attribute>> getAllAttribute(Pageable pageable) {
+        Page<Attribute> attributes = attributeService.findAll(pageable);
         if (attributes.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return ResponseEntity.noContent().build();
         }
-        return new ResponseEntity<>(attributes, HttpStatus.OK);
+        return ResponseEntity.ok(attributes);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Attribute> getOneAttribute(@PathVariable int id) {
-        Attribute attribute = attributeService.findOne(id);
-        if (attribute != null) {
-            return new ResponseEntity<>(attribute, HttpStatus.OK);
+        try {
+            Attribute found = attributeService.find(id);
+            return ResponseEntity.ok(found);
+        } catch (AttributeNotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PostMapping
-    public ResponseEntity<Attribute> createAttribute(@RequestBody Attribute newAttribute,
+    public ResponseEntity<Attribute> createAttribute(@RequestBody Attribute attribute,
                                                      UriComponentsBuilder uriComponentsBuilder) {
-        attributeService.save(newAttribute);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(uriComponentsBuilder.path("/attributes/" + newAttribute.getId()).build().toUri());
-        return new ResponseEntity<>(newAttribute, headers, HttpStatus.CREATED);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteAttribute(@PathVariable int id) {
-        if (attributeService.findOne(id) != null) {
-            attributeService.delete(id);
-            return new ResponseEntity<>(HttpStatus.OK);
+        try {
+            Attribute saved = attributeService.create(attribute);
+            URI uri = uriComponentsBuilder.path("/attributes/" + saved.getId()).build().toUri();
+            return ResponseEntity.created(uri).body(saved);
+        } catch (AttributeExistedException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Attribute> updateAttribute(@PathVariable int id,
-                                                     @RequestBody Attribute attribute) {
-        if (attributeService.findOne(id) != null) {
+    public ResponseEntity<Attribute> updateAttribute(@RequestBody Attribute attribute,
+                                                     @PathVariable int id) {
+        try {
             attribute.setId(id);
-            attributeService.save(attribute);
-            return new ResponseEntity<>(attribute, HttpStatus.OK);
+            Attribute updated = attributeService.update(attribute);
+            return ResponseEntity.ok(updated);
+        } catch (AttributeNotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Attribute> deleteAttribute(@PathVariable int id) {
+        attributeService.delete(id);
+        return ResponseEntity.ok().build();
     }
 }
