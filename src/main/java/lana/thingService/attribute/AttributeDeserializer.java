@@ -5,21 +5,20 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
 @Component
-public class AttributeHandle extends StdDeserializer<Attribute> {
+public class AttributeDeserializer extends StdDeserializer<Attribute> {
     private AttributeRepo attributeRepo;
 
-    public AttributeHandle() {
+    public AttributeDeserializer() {
         this(null);
     }
 
-    public AttributeHandle(Class<?> vc) {
+    public AttributeDeserializer(Class<?> vc) {
         super(vc);
     }
 

@@ -2,7 +2,7 @@ package lana.thingService.thing;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lana.thingService.attribute.Attribute;
-import lana.thingService.attribute.AttributeHandle;
+import lana.thingService.attribute.AttributeDeserializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -28,6 +28,6 @@ public class Thing {
 
     @ManyToOne
     @JoinColumn
-    @JsonDeserialize(using = AttributeHandle.class)
+    @JsonDeserialize(using = AttributeDeserializer.class)
     private Attribute attribute;
 }
