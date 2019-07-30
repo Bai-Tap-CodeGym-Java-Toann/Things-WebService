@@ -1,9 +1,5 @@
-package lana.attributeService.attribute;
+package lana.thingService.attribute;
 
-import lana.thingService.attribute.Attribute;
-import lana.thingService.attribute.AttributeExistedException;
-import lana.thingService.attribute.AttributeNotFoundException;
-import lana.thingService.attribute.AttributeService;
 import lana.thingService.thing.Thing;
 import lana.thingService.thing.ThingRepo;
 import org.springframework.beans.factory.annotation.Autowired;
