@@ -28,6 +28,7 @@ public class Thing {
 
     @ManyToOne
     @JoinColumn
+    // to binding attribute from id.
     @JsonDeserialize(using = AttributeDeserializer.class)
     private Attribute attribute;
 }
