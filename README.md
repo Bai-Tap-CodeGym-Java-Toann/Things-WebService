@@ -1,6 +1,6 @@
 ## Spring Things-WebService
 
-- Support: POST,GET,DELETE,PUT,PATCH
+- Support: POST,GET,DELETE,PUT
 
 - Json:
   - Thing:

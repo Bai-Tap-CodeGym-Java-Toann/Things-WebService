@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.lang.reflect.Method;
 import java.util.List;
 
 @RestController
@@ -78,33 +77,6 @@ public class AttributeController {
                                                      @RequestBody Attribute attribute) {
         if (attributeService.findOne(id) != null) {
             attribute.setId(id);
-            attributeService.save(attribute);
-            return new ResponseEntity<>(attribute, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    @PatchMapping("/{id}")
-    private ResponseEntity<Attribute> pacthAttribute(@PathVariable int id,
-                                                     @RequestBody Attribute patch) {
-        Attribute attribute = attributeService.findOne(id);
-        if (attribute != null) {
-            for (Method method : Attribute.class.getDeclaredMethods()) {
-                if (method.getName().matches("^(get).+$")) {
-                    try {
-                        Object returnedObject = method.invoke(patch);
-                        if (returnedObject != null) {
-                            String fieldName = method.getName().substring(3);
-                            Class returnedType = method.getReturnType();
-                            Method setter = Attribute.class.getDeclaredMethod("set" + fieldName, returnedType);
-                            setter.invoke(attribute, returnedType.cast(returnedObject));
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-                    }
-                }
-            }
             attributeService.save(attribute);
             return new ResponseEntity<>(attribute, HttpStatus.OK);
         }
