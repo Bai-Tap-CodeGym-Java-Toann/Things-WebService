@@ -81,7 +81,7 @@ public class AttributeController {
         }
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public ResponseEntity<Attribute> deleteAttribute(@PathVariable int id) {
         attributeService.delete(id);
         return ResponseEntity.ok().build();

@@ -66,7 +66,7 @@ public class ThingController {
         }
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public ResponseEntity<Thing> deleteThing(@PathVariable int id) {
         thingService.delete(id);
         return ResponseEntity.ok().build();
