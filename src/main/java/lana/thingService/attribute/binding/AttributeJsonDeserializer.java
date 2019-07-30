@@ -13,14 +13,14 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
-public class AttributeDeserializer extends StdDeserializer<Attribute> {
+public class AttributeJsonDeserializer extends StdDeserializer<Attribute> {
     private AttributeRepo attributeRepo;
 
-    public AttributeDeserializer() {
+    public AttributeJsonDeserializer() {
         this(null);
     }
 
-    public AttributeDeserializer(Class<?> vc) {
+    public AttributeJsonDeserializer(Class<?> vc) {
         super(vc);
     }
 
