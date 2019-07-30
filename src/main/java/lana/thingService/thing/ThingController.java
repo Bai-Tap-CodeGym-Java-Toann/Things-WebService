@@ -65,4 +65,10 @@ public class ThingController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @DeleteMapping
+    public ResponseEntity<Thing> deleteThing(@PathVariable int id) {
+        thingService.delete(id);
+        return ResponseEntity.ok().build();
+    }
 }
