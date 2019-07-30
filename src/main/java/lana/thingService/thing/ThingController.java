@@ -1,6 +1,5 @@
 package lana.thingService.thing;
 
-import lana.thingService.util.objectmapper.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,7 +18,7 @@ public class ThingController {
     private final ThingService thingService;
 
     @Autowired
-    public ThingController(ThingService thingService, ObjectMapper objectMapper) {
+    public ThingController(ThingService thingService) {
         this.thingService = thingService;
     }
 
