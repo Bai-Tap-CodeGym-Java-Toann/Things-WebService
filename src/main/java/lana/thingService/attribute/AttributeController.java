@@ -16,17 +16,17 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping(path = "/api/attributes", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AttributeController {
-    private AttributeService attributeService;
+    private AttributeRepo attributeRepo;
 
     @Autowired
-    public void setUpAttributeController(AttributeService attributeService) {
-        this.attributeService = attributeService;
+    public void setUpAttributeController(AttributeRepo attributeRepo) {
+        this.attributeRepo = attributeRepo;
     }
 
     //=============================================
     @GetMapping("/{id}/things")
     public ResponseEntity<List<Thing>> getAllAttributeThings(@PathVariable int id) {
-        Attribute attribute = attributeService.findOne(id);
+        Attribute attribute = attributeRepo.findById(id).orElse(null);
         if (attribute != null) {
             List<Thing> things = attribute.getThings();
             if (things.isEmpty()) {
@@ -39,7 +39,7 @@ public class AttributeController {
 
     @GetMapping
     public ResponseEntity<List<Attribute>> getAllAttribute() {
-        List<Attribute> attributes = attributeService.findAll();
+        List<Attribute> attributes = attributeRepo.findAll();
         if (attributes.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -48,7 +48,7 @@ public class AttributeController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Attribute> getOneAttribute(@PathVariable int id) {
-        Attribute attribute = attributeService.findOne(id);
+        Attribute attribute = attributeRepo.findById(id).orElse(null);
         if (attribute != null) {
             return new ResponseEntity<>(attribute, HttpStatus.OK);
         }
@@ -58,7 +58,7 @@ public class AttributeController {
     @PostMapping
     public ResponseEntity<Attribute> createAttribute(@RequestBody Attribute newAttribute,
                                                      UriComponentsBuilder uriComponentsBuilder) {
-        attributeService.save(newAttribute);
+        attributeRepo.save(newAttribute);
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(uriComponentsBuilder.path("/attributes/" + newAttribute.getId()).build().toUri());
         return new ResponseEntity<>(newAttribute, headers, HttpStatus.CREATED);
@@ -66,8 +66,8 @@ public class AttributeController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAttribute(@PathVariable int id) {
-        if (attributeService.findOne(id) != null) {
-            attributeService.delete(id);
+        if (attributeRepo.findById(id).orElse(null) != null) {
+            attributeRepo.deleteById(id);
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -76,9 +76,9 @@ public class AttributeController {
     @PutMapping("/{id}")
     public ResponseEntity<Attribute> updateAttribute(@PathVariable int id,
                                                      @RequestBody Attribute attribute) {
-        if (attributeService.findOne(id) != null) {
+        if (attributeRepo.findById(id).orElse(null) != null) {
             attribute.setId(id);
-            attributeService.save(attribute);
+            attributeRepo.save(attribute);
             return new ResponseEntity<>(attribute, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -87,7 +87,7 @@ public class AttributeController {
     @PatchMapping("/{id}")
     private ResponseEntity<Attribute> pacthAttribute(@PathVariable int id,
                                                      @RequestBody Attribute patch) {
-        Attribute attribute = attributeService.findOne(id);
+        Attribute attribute = attributeRepo.findById(id).orElse(null);
         if (attribute != null) {
             for (Method method : Attribute.class.getDeclaredMethods()) {
                 if (method.getName().matches("^(get).+$")) {
@@ -105,7 +105,7 @@ public class AttributeController {
                     }
                 }
             }
-            attributeService.save(attribute);
+            attributeRepo.save(attribute);
             return new ResponseEntity<>(attribute, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
