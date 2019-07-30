@@ -1,40 +1,44 @@
 package lana.thingService.attribute;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 
 @Service("attributeService")
 public class AttributeServiceImpl implements AttributeService {
-    private AttributeRepo attributeRepo;
+    private final AttributeRepo attributeRepo;
 
     @Autowired
-    public void setAttributeRepo(AttributeRepo attributeRepo) {
+    public AttributeServiceImpl(AttributeRepo attributeRepo) {
         this.attributeRepo = attributeRepo;
     }
 
     @Override
-    public List<Attribute> findAll() {
-        return attributeRepo.findAll();
+    public Page<Attribute> findAll(Pageable pageable) {
+        return attributeRepo.findAll(pageable);
     }
 
     @Override
-    public Attribute findOne(int id) {
-        return attributeRepo.findById(id).orElse(null);
+    public void delete(Integer id) {
+        attributeRepo.deleteById(id);
     }
 
     @Override
-    public void save(Attribute attribute) {
-        attributeRepo.save(attribute);
+    public Attribute create(Attribute thing) throws AttributeExistedException {
+        if (attributeRepo.existsById(thing.getId())) throw new AttributeExistedException();
+        return attributeRepo.save(thing);
     }
 
     @Override
-    public boolean delete(int id) {
-        if (findOne(id) != null) {
-            attributeRepo.deleteById(id);
-            return true;
-        }
-        return false;
+    public Attribute find(Integer id) throws AttributeNotFoundException {
+        return attributeRepo.findById(id).orElseThrow(AttributeNotFoundException::new);
+    }
+
+    @Override
+    public Attribute update(Attribute thing) throws AttributeNotFoundException {
+        thing = attributeRepo.findById(thing.getId()).orElseThrow(AttributeNotFoundException::new);
+        return attributeRepo.save(thing);
     }
 }
