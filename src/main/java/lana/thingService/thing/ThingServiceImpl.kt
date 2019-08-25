@@ -24,7 +24,7 @@ constructor(private val thingRepo: ThingRepo) : ThingService {
     }
 
     override fun create(thing: Thing): Thing? {
-        return if (isExist(thing)) null else thingRepo.save(thing)
+        return if (!isExist(thing)) thingRepo.save(thing) else null
     }
 
     override fun update(thing: Thing): Thing? {
