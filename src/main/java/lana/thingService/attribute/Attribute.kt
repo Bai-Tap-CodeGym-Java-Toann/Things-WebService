@@ -9,15 +9,15 @@ import javax.persistence.*
 @Table(name = "attribute")
 // prevent infinite loop when convert to json
 @JsonIgnoreProperties(value = ["things"])
-data class Attribute(
+class Attribute(
         @Id
         @GeneratedValue
-        var id: Int,
+        var id: Int? = null,
 
-        var name: String,
+        var name: String = "",
 
-        var description: String,
+        var description: String = "",
 
         @OneToMany(mappedBy = "attribute")
-        var things: List<Thing>
+        var things: List<Thing> = emptyList()
 )

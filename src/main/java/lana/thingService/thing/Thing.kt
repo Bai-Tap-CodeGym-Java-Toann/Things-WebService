@@ -8,19 +8,19 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "thing")
-data class Thing(
+class Thing(
         @Id
         @GeneratedValue
-        var id: Int,
+        var id: Int? = null,
 
-        var name: String,
+        var name: String = "",
 
-        var description: String,
+        var description: String = "",
 
-        var generic: String,
+        var generic: String = "",
 
         @ManyToOne
         @JoinColumn
         @JsonDeserialize(using = AttributeJsonDeserializer::class)
-        var attribute: Attribute
+        var attribute: Attribute? = null
 )

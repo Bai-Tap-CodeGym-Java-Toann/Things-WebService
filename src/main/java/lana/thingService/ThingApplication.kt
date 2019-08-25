@@ -1,12 +1,11 @@
-package lana.thingService;
+package lana.thingService
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.SpringApplication
+import org.springframework.boot.autoconfigure.SpringBootApplication
 
 @SpringBootApplication
-public class ThingApplication {
+open class ThingApplication
 
-    public static void main(String[] args) {
-        SpringApplication.run(ThingApplication.class, args);
-    }
+fun main(args: Array<String>) {
+    SpringApplication.run(ThingApplication::class.java, *args)
 }
