@@ -1,16 +1,17 @@
-package lana.thingService.thing;
+package lana.thingService.thing
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 
-public interface ThingService {
-    Thing update(Thing thing) throws ThingNotFoundException;
+interface ThingService {
 
-    Thing create(Thing thing) throws ThingExistedException;
+    fun update(thing: Thing): Thing?
 
-    Thing find(Integer id) throws ThingNotFoundException;
+    fun create(thing: Thing): Thing?
 
-    void delete(Integer id);
+    fun find(id: Int): Thing?
 
-    Page<Thing> findAll(Pageable pageable);
+    fun delete(id: Int)
+
+    fun findAll(pageable: Pageable): Page<Thing>
 }

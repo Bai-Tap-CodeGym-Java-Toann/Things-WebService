@@ -1,74 +1,57 @@
-package lana.thingService.thing;
+package lana.thingService.thing
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import java.net.URI;
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
-@RequestMapping(path = "/api/things", produces = MediaType.APPLICATION_JSON_VALUE)
-public class ThingController {
-    private final ThingService thingService;
+@CrossOrigin(origins = ["http://localhost:4200"])
+@RequestMapping(path = ["/api/things"], produces = [MediaType.APPLICATION_JSON_VALUE])
+class ThingController
+@Autowired
+constructor(private val thingService: ThingService) {
 
-    @Autowired
-    public ThingController(ThingService thingService) {
-        this.thingService = thingService;
-    }
-
-    //====================================
     @GetMapping
-    public ResponseEntity<Page<Thing>> getAllThing(Pageable pageable) {
-        Page<Thing> things = thingService.findAll(pageable);
-        if (things.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(things);
+    fun getAllThing(pageable: Pageable): ResponseEntity<Page<Thing>> {
+        val things = thingService.findAll(pageable)
+        return if (things.isEmpty) ResponseEntity.noContent().build() else ResponseEntity.ok(things)
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Thing> getOneThing(@PathVariable int id) {
-        try {
-            Thing found = thingService.find(id);
-            return ResponseEntity.ok(found);
-        } catch (ThingNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    fun getOneThing(@PathVariable id: Int): ResponseEntity<Thing> {
+        val found = thingService.find(id)
+        return if (found != null) ResponseEntity.ok(found) else ResponseEntity.notFound().build()
     }
 
     @PostMapping
-    public ResponseEntity<Thing> createThing(@RequestBody Thing thing,
-                                             UriComponentsBuilder uriComponentsBuilder) {
-        try {
-            Thing saved = thingService.create(thing);
-            URI uri = uriComponentsBuilder.path("/things/" + saved.getId()).build().toUri();
-            return ResponseEntity.created(uri).body(saved);
-        } catch (ThingExistedException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+    fun createThing(@RequestBody thing: Thing,
+                    uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Thing> {
+        val saved = thingService.create(thing)
+        return if (saved != null) {
+            val uri = uriComponentsBuilder.path("/things/" + saved.id).build().toUri()
+            ResponseEntity.created(uri).body(saved)
+        } else {
+            ResponseEntity.status(HttpStatus.CONFLICT).build()
         }
+
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Thing> updateThing(@RequestBody Thing thing,
-                                             @PathVariable int id) {
-        try {
-            thing.setId(id);
-            Thing updated = thingService.update(thing);
-            return ResponseEntity.ok(updated);
-        } catch (ThingNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    fun updateThing(@RequestBody thing: Thing,
+                    @PathVariable id: Int): ResponseEntity<Thing> {
+        thing.id = id
+        val updated = thingService.update(thing)
+        return if (updated != null) ResponseEntity.ok(updated) else ResponseEntity.notFound().build()
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Thing> deleteThing(@PathVariable int id) {
-        thingService.delete(id);
-        return ResponseEntity.ok().build();
+    fun deleteThing(@PathVariable id: Int): ResponseEntity<Thing> {
+        thingService.delete(id)
+        return ResponseEntity.ok().build()
     }
 }

@@ -1,51 +1,38 @@
-package lana.thingService.thing;
+package lana.thingService.thing
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.stereotype.Service
 
 @Service("thingService")
-public class ThingServiceImpl implements ThingService {
-    private final ThingRepo thingRepo;
+class ThingServiceImpl
+@Autowired
+constructor(private val thingRepo: ThingRepo) : ThingService {
 
-    @Autowired
-    public ThingServiceImpl(ThingRepo thingRepo) {
-        this.thingRepo = thingRepo;
+    override fun findAll(pageable: Pageable): Page<Thing> {
+        return thingRepo.findAll(pageable)
+    }
+
+    override fun find(id: Int): Thing? {
+        return thingRepo.findById(id).get()
     }
 
 
-    @Override
-    public Page<Thing> findAll(Pageable pageable) {
-        return thingRepo.findAll(pageable);
+    override fun delete(id: Int) {
+        thingRepo.deleteById(id)
     }
 
-    @Override
-    public void delete(Integer id) {
-        thingRepo.deleteById(id);
+    override fun create(thing: Thing): Thing? {
+        return if (isExist(thing)) null else thingRepo.save(thing)
     }
 
-    @Override
-    public Thing create(Thing thing) throws ThingExistedException {
-        if (isExist(thing)) throw new ThingExistedException();
-        return thingRepo.save(thing);
+    override fun update(thing: Thing): Thing? {
+        return if (isExist(thing)) thingRepo.save(thing) else null
     }
 
-    private boolean isExist(Thing thing) {
-        Integer thingId = thing.getId();
-        if (thingId == null) return false;
-        return thingRepo.existsById(thingId);
-    }
-
-    @Override
-    public Thing find(Integer id) throws ThingNotFoundException {
-        return thingRepo.findById(id).orElseThrow(ThingNotFoundException::new);
-    }
-
-
-    @Override
-    public Thing update(Thing thing) throws ThingNotFoundException {
-        thing = thingRepo.findById(thing.getId()).orElseThrow(ThingNotFoundException::new);
-        return thingRepo.save(thing);
+    private fun isExist(thing: Thing): Boolean {
+        val thingId = thing.id ?: return false
+        return thingRepo.existsById(thingId)
     }
 }
