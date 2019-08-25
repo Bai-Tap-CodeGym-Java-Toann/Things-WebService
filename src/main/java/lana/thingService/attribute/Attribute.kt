@@ -1,11 +1,9 @@
-package lana.thingService.attribute;
+package lana.thingService.attribute
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lana.thingService.thing.Thing;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import lana.thingService.thing.Thing
 
-
-import javax.persistence.*;
-
+import javax.persistence.*
 
 @Entity
 @Table(name = "attribute")

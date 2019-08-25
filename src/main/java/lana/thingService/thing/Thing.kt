@@ -24,4 +24,3 @@ data class Thing(
         @JsonDeserialize(using = AttributeJsonDeserializer::class)
         var attribute: Attribute
 )
-

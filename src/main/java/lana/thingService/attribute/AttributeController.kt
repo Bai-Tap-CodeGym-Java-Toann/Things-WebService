@@ -18,7 +18,6 @@ class AttributeController
 @Autowired
 constructor(private val attributeService: AttributeService, private val thingRepo: ThingRepo) {
 
-    //=============================================
     @GetMapping("/{id}/things")
     fun getAllAttributeThings(@PathVariable id: Int, pageable: Pageable): ResponseEntity<Page<Thing>> {
         return if (attributeService.find(id) != null) {
