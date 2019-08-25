@@ -1,17 +1,17 @@
-package lana.thingService.attribute;
+package lana.thingService.attribute
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 
 
-public interface AttributeService {
-    Page<Attribute> findAll(Pageable pageable);
+interface AttributeService {
+    fun findAll(pageable: Pageable): Page<Attribute>
 
-    Attribute find(Integer id) throws AttributeNotFoundException;
+    fun find(id: Int): Attribute?
 
-    Attribute update(Attribute attribute) throws AttributeNotFoundException;
+    fun update(attribute: Attribute): Attribute?
 
-    Attribute create(Attribute attribute) throws AttributeExistedException;
+    fun create(attribute: Attribute): Attribute?
 
-    void delete(Integer id);
+    fun delete(id: Int)
 }

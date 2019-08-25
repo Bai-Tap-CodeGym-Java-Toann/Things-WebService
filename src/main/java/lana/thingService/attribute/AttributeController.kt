@@ -1,89 +1,69 @@
-package lana.thingService.attribute;
+package lana.thingService.attribute
 
-import lana.thingService.thing.Thing;
-import lana.thingService.thing.ThingRepo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import java.net.URI;
+import lana.thingService.thing.Thing
+import lana.thingService.thing.ThingRepo
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
-@RequestMapping(path = "/api/attributes", produces = MediaType.APPLICATION_JSON_VALUE)
-public class AttributeController {
-    private final AttributeService attributeService;
-    private final ThingRepo thingRepo;
-
-    @Autowired
-    public AttributeController(AttributeService attributeService, ThingRepo thingRepo) {
-        this.attributeService = attributeService;
-        this.thingRepo = thingRepo;
-    }
+@CrossOrigin(origins = ["http://localhost:4200"])
+@RequestMapping(path = ["/api/attributes"], produces = [MediaType.APPLICATION_JSON_VALUE])
+class AttributeController
+@Autowired
+constructor(private val attributeService: AttributeService, private val thingRepo: ThingRepo) {
 
     //=============================================
     @GetMapping("/{id}/things")
-    public ResponseEntity<Page<Thing>> getAllAttributeThings(@PathVariable int id, Pageable pageable) {
-        try {
-            attributeService.find(id);
-            Page<Thing> things = thingRepo.findAllByAttribute_Id(id, pageable);
-            return ResponseEntity.ok(things);
-        } catch (AttributeNotFoundException e) {
-            return ResponseEntity.notFound().build();
+    fun getAllAttributeThings(@PathVariable id: Int, pageable: Pageable): ResponseEntity<Page<Thing>> {
+        return if (attributeService.find(id) != null) {
+            val things = thingRepo.findAllByAttributeId(id, pageable)
+            ResponseEntity.ok(things)
+        } else {
+            ResponseEntity.notFound().build()
         }
     }
 
     @GetMapping
-    public ResponseEntity<Page<Attribute>> getAllAttribute(Pageable pageable) {
-        Page<Attribute> attributes = attributeService.findAll(pageable);
-        if (attributes.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(attributes);
+    fun getAllAttribute(pageable: Pageable): ResponseEntity<Page<Attribute>> {
+        val attributes = attributeService.findAll(pageable)
+        return if (attributes.isEmpty) ResponseEntity.noContent().build() else ResponseEntity.ok(attributes)
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Attribute> getOneAttribute(@PathVariable int id) {
-        try {
-            Attribute found = attributeService.find(id);
-            return ResponseEntity.ok(found);
-        } catch (AttributeNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    fun getOneAttribute(@PathVariable id: Int): ResponseEntity<Attribute> {
+        val found = attributeService.find(id)
+        return if (found != null) ResponseEntity.ok(found) else ResponseEntity.notFound().build()
     }
 
     @PostMapping
-    public ResponseEntity<Attribute> createAttribute(@RequestBody Attribute attribute,
-                                                     UriComponentsBuilder uriComponentsBuilder) {
-        try {
-            Attribute saved = attributeService.create(attribute);
-            URI uri = uriComponentsBuilder.path("/attributes/" + saved.getId()).build().toUri();
-            return ResponseEntity.created(uri).body(saved);
-        } catch (AttributeExistedException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+    fun createAttribute(@RequestBody attribute: Attribute,
+                        uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Attribute> {
+        val saved = attributeService.create(attribute)
+        return if (saved != null) {
+            val uri = uriComponentsBuilder.path("/attributes/" + saved.id).build().toUri()
+            ResponseEntity.created(uri).body(saved)
+        } else {
+            ResponseEntity.status(HttpStatus.CONFLICT).build()
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Attribute> updateAttribute(@RequestBody Attribute attribute,
-                                                     @PathVariable int id) {
-        try {
-            attribute.setId(id);
-            Attribute updated = attributeService.update(attribute);
-            return ResponseEntity.ok(updated);
-        } catch (AttributeNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    fun updateAttribute(@RequestBody attribute: Attribute,
+                        @PathVariable id: Int): ResponseEntity<Attribute> {
+        attribute.id = id
+        val updated = attributeService.update(attribute)
+        return if (updated != null) ResponseEntity.ok(updated) else ResponseEntity.notFound().build()
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Attribute> deleteAttribute(@PathVariable int id) {
-        attributeService.delete(id);
-        return ResponseEntity.ok().build();
+    fun deleteAttribute(@PathVariable id: Int): ResponseEntity<Attribute> {
+        attributeService.delete(id)
+        return ResponseEntity.ok().build()
     }
 }
