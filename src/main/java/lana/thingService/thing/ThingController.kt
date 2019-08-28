@@ -1,5 +1,6 @@
 package lana.thingService.thing
 
+import io.github.perplexhub.rsql.RSQLSupport
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -17,8 +18,12 @@ class ThingController
 constructor(private val thingService: ThingService) {
 
     @GetMapping
-    fun getAllThing(pageable: Pageable): ResponseEntity<Page<Thing>> {
-        val things = thingService.findAll(pageable)
+    fun getAllThing(@RequestParam("q") query: String?, pageable: Pageable): ResponseEntity<Page<Thing>> {
+        val things = if (query == null) {
+            thingService.findAll(pageable)
+        } else {
+            thingService.findAll(RSQLSupport.rsql(query), pageable)
+        }
         return if (things.isEmpty) ResponseEntity.noContent().build() else ResponseEntity.ok(things)
     }
 

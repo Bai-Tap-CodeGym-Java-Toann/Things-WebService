@@ -1,5 +1,6 @@
 package lana.thingService.attribute
 
+import io.github.perplexhub.rsql.RSQLSupport
 import lana.thingService.thing.Thing
 import lana.thingService.thing.ThingRepo
 import org.springframework.beans.factory.annotation.Autowired
@@ -29,8 +30,12 @@ constructor(private val attributeService: AttributeService, private val thingRep
     }
 
     @GetMapping
-    fun getAllAttribute(pageable: Pageable): ResponseEntity<Page<Attribute>> {
-        val attributes = attributeService.findAll(pageable)
+    fun getAllAttribute(@RequestParam("q") query: String?, pageable: Pageable): ResponseEntity<Page<Attribute>> {
+        val attributes = if (query == null) {
+            attributeService.findAll(pageable)
+        } else {
+            attributeService.findAll(RSQLSupport.rsql(query), pageable)
+        }
         return if (attributes.isEmpty) ResponseEntity.noContent().build() else ResponseEntity.ok(attributes)
     }
 

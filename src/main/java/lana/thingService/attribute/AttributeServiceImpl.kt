@@ -3,12 +3,16 @@ package lana.thingService.attribute
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Service
 
 @Service("attributeService")
 class AttributeServiceImpl
 @Autowired
 constructor(private val attributeRepo: AttributeRepo) : AttributeService {
+    override fun findAll(specification: Specification<Attribute>, pageable: Pageable): Page<Attribute> {
+        return attributeRepo.findAll(specification, pageable)
+    }
 
     override fun findAll(pageable: Pageable): Page<Attribute> {
         return attributeRepo.findAll(pageable)
