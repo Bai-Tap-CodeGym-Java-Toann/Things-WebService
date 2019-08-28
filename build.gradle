@@ -37,19 +37,23 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-//    implementation 'org.springframework.boot:spring-boot-starter-data-rest'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
-//    implementation('org.springframework.boot:spring-boot-starter-security')
-//    implementation('org.springframework.boot:spring-boot-starter-validation')
+    runtimeOnly 'com.h2database:h2'
+
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-web-services'
-    implementation 'org.springframework.boot:spring-boot-starter-websocket'
-    runtimeOnly 'org.springframework.boot:spring-boot-devtools'
-    runtimeOnly 'com.h2database:h2'
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
-    implementation 'org.modelmapper:modelmapper:2.3.5'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    runtimeOnly 'org.springframework.boot:spring-boot-devtools'
+
+//    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+//    implementation('org.springframework.boot:spring-boot-starter-security')
+//    implementation('org.springframework.boot:spring-boot-starter-validation')
+
+    implementation 'org.modelmapper:modelmapper:2.3.5'
+    runtimeOnly 'org.springframework.boot:spring-boot-devtools'
+    implementation: 'io.github.perplexhub:rsql-jpa-specification:3.0.3'
+
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 }
