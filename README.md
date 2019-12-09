@@ -18,3 +18,4 @@
   - /api/attributes/:id/things (GET only)
   
 - CrossOrigin: http://localhost:4200
+- Support RSQL
