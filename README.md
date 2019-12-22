@@ -16,5 +16,3 @@
   - /api/things
   - /api/attributes
   - /api/attributes/:id/things (GET only)
-  
-- CrossOrigin: http://localhost:4200
