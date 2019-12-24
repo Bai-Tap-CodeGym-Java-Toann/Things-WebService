@@ -40,19 +40,17 @@ public class AttributeController {
     @GetMapping
     public ResponseEntity<Page<Attribute>> getAllAttribute(Pageable pageable) {
         Page<Attribute> attributes = attributeService.findAll(pageable);
-        if (attributes.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(attributes);
+        return attributes.isEmpty()
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(attributes);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Attribute> getOneAttribute(@PathVariable int id) {
         Optional<Attribute> found = attributeService.find(id);
-        if (found.isPresent()) {
-            return ResponseEntity.ok(found.get());
-        }
-        return ResponseEntity.notFound().build();
+        return found
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
@@ -71,10 +69,9 @@ public class AttributeController {
                                                      @PathVariable int id) {
         attribute.setId(id);
         Optional<Attribute> updated = attributeService.update(attribute);
-        if (updated.isPresent()) {
-            return ResponseEntity.ok(updated.get());
-        }
-        return ResponseEntity.notFound().build();
+        return updated
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")

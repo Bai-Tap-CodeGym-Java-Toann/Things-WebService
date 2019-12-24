@@ -27,19 +27,17 @@ public class ThingController {
     @GetMapping
     public ResponseEntity<Page<Thing>> getAllThing(Pageable pageable) {
         Page<Thing> things = thingService.findAll(pageable);
-        if (things.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(things);
+        return things.isEmpty()
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(things);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Thing> getOneThing(@PathVariable int id) {
         Optional<Thing> found = thingService.find(id);
-        if (found.isPresent()) {
-            return ResponseEntity.ok(found.get());
-        }
-        return ResponseEntity.notFound().build();
+        return found
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
@@ -58,10 +56,9 @@ public class ThingController {
                                              @PathVariable int id) {
         thing.setId(id);
         Optional<Thing> updated = thingService.update(thing);
-        if (updated.isPresent()) {
-            return ResponseEntity.ok(updated.get());
-        }
-        return ResponseEntity.notFound().build();
+        return updated
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
