@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
@@ -29,13 +30,11 @@ public class AttributeController {
     //=============================================
     @GetMapping("/{id}/things")
     public ResponseEntity<Page<Thing>> getAllAttributeThings(@PathVariable int id, Pageable pageable) {
-        try {
-            attributeService.find(id);
+        if (attributeService.find(id).isPresent()) {
             Page<Thing> things = thingRepo.findAllByAttribute_Id(id, pageable);
             return ResponseEntity.ok(things);
-        } catch (AttributeNotFoundException e) {
-            return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping
@@ -49,36 +48,33 @@ public class AttributeController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Attribute> getOneAttribute(@PathVariable int id) {
-        try {
-            Attribute found = attributeService.find(id);
-            return ResponseEntity.ok(found);
-        } catch (AttributeNotFoundException e) {
-            return ResponseEntity.notFound().build();
+        Optional<Attribute> found = attributeService.find(id);
+        if (found.isPresent()) {
+            return ResponseEntity.ok(found.get());
         }
+        return ResponseEntity.notFound().build();
     }
 
     @PostMapping
     public ResponseEntity<Attribute> createAttribute(@RequestBody Attribute attribute,
                                                      UriComponentsBuilder uriComponentsBuilder) {
-        try {
-            Attribute saved = attributeService.create(attribute);
-            URI uri = uriComponentsBuilder.path("/attributes/" + saved.getId()).build().toUri();
-            return ResponseEntity.created(uri).body(saved);
-        } catch (AttributeExistedException e) {
+        if (attributeService.find(attribute.getId()).isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
+        Attribute saved = attributeService.create(attribute);
+        URI uri = uriComponentsBuilder.path("/attributes/" + saved.getId()).build().toUri();
+        return ResponseEntity.created(uri).body(saved);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Attribute> updateAttribute(@RequestBody Attribute attribute,
                                                      @PathVariable int id) {
-        try {
-            attribute.setId(id);
-            Attribute updated = attributeService.update(attribute);
-            return ResponseEntity.ok(updated);
-        } catch (AttributeNotFoundException e) {
-            return ResponseEntity.notFound().build();
+        attribute.setId(id);
+        Optional<Attribute> updated = attributeService.update(attribute);
+        if (updated.isPresent()) {
+            return ResponseEntity.ok(updated.get());
         }
+        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")

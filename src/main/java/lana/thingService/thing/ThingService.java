@@ -3,12 +3,15 @@ package lana.thingService.thing;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Optional;
+
 public interface ThingService {
-    Thing update(Thing thing) throws ThingNotFoundException;
 
-    Thing create(Thing thing) throws ThingExistedException;
+    Optional<Thing> update(Thing thing);
 
-    Thing find(Integer id) throws ThingNotFoundException;
+    Optional<Thing> find(Integer id);
+
+    Thing create(Thing thing);
 
     void delete(Integer id);
 

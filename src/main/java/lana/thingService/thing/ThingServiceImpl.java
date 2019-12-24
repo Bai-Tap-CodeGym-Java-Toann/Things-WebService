@@ -5,6 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service("thingService")
 public class ThingServiceImpl implements ThingService {
     private final ThingRepo thingRepo;
@@ -26,26 +28,21 @@ public class ThingServiceImpl implements ThingService {
     }
 
     @Override
-    public Thing create(Thing thing) throws ThingExistedException {
-        if (isExist(thing)) throw new ThingExistedException();
+    public Thing create(Thing thing) {
         return thingRepo.save(thing);
     }
 
-    private boolean isExist(Thing thing) {
-        Integer thingId = thing.getId();
-        if (thingId == null) return false;
-        return thingRepo.existsById(thingId);
+    @Override
+    public Optional<Thing> find(Integer id) {
+        return thingRepo.findById(id);
     }
 
     @Override
-    public Thing find(Integer id) throws ThingNotFoundException {
-        return thingRepo.findById(id).orElseThrow(ThingNotFoundException::new);
-    }
-
-
-    @Override
-    public Thing update(Thing thing) throws ThingNotFoundException {
-        thing = thingRepo.findById(thing.getId()).orElseThrow(ThingNotFoundException::new);
-        return thingRepo.save(thing);
+    public Optional<Thing> update(Thing thing) {
+        Optional<Thing> existed = thingRepo.findById(thing.getId());
+        if (existed.isPresent()) {
+            existed = Optional.of(thingRepo.save(thing));
+        }
+        return existed;
     }
 }

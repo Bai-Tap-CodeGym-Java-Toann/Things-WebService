@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
@@ -34,36 +35,33 @@ public class ThingController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Thing> getOneThing(@PathVariable int id) {
-        try {
-            Thing found = thingService.find(id);
-            return ResponseEntity.ok(found);
-        } catch (ThingNotFoundException e) {
-            return ResponseEntity.notFound().build();
+        Optional<Thing> found = thingService.find(id);
+        if (found.isPresent()) {
+            return ResponseEntity.ok(found.get());
         }
+        return ResponseEntity.notFound().build();
     }
 
     @PostMapping
     public ResponseEntity<Thing> createThing(@RequestBody Thing thing,
                                              UriComponentsBuilder uriComponentsBuilder) {
-        try {
+        if (thingService.find(thing.getId()).isPresent()) {
             Thing saved = thingService.create(thing);
             URI uri = uriComponentsBuilder.path("/things/" + saved.getId()).build().toUri();
             return ResponseEntity.created(uri).body(saved);
-        } catch (ThingExistedException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
+        return ResponseEntity.status(HttpStatus.CONFLICT).build();
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Thing> updateThing(@RequestBody Thing thing,
                                              @PathVariable int id) {
-        try {
-            thing.setId(id);
-            Thing updated = thingService.update(thing);
-            return ResponseEntity.ok(updated);
-        } catch (ThingNotFoundException e) {
-            return ResponseEntity.notFound().build();
+        thing.setId(id);
+        Optional<Thing> updated = thingService.update(thing);
+        if (updated.isPresent()) {
+            return ResponseEntity.ok(updated.get());
         }
+        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")

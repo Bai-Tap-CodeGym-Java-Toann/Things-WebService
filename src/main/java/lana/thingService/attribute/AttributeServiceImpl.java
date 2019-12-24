@@ -5,6 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 
 @Service("attributeService")
 public class AttributeServiceImpl implements AttributeService {
@@ -26,25 +28,21 @@ public class AttributeServiceImpl implements AttributeService {
     }
 
     @Override
-    public Attribute create(Attribute attribute) throws AttributeExistedException {
-        if (isExist(attribute)) throw new AttributeExistedException();
+    public Attribute create(Attribute attribute) {
         return attributeRepo.save(attribute);
     }
 
-    private boolean isExist(Attribute attribute) {
-        Integer attributeId = attribute.getId();
-        if (attributeId == null) return false;
-        return attributeRepo.existsById(attributeId);
+    @Override
+    public Optional<Attribute> find(Integer id) {
+        return attributeRepo.findById(id);
     }
 
     @Override
-    public Attribute find(Integer id) throws AttributeNotFoundException {
-        return attributeRepo.findById(id).orElseThrow(AttributeNotFoundException::new);
-    }
-
-    @Override
-    public Attribute update(Attribute attribute) throws AttributeNotFoundException {
-        attribute = attributeRepo.findById(attribute.getId()).orElseThrow(AttributeNotFoundException::new);
-        return attributeRepo.save(attribute);
+    public Optional<Attribute> update(Attribute attribute) {
+        Optional<Attribute> existed = attributeRepo.findById(attribute.getId());
+        if (existed.isPresent()) {
+            existed = Optional.of(attributeRepo.save(attribute));
+        }
+        return existed;
     }
 }
