@@ -3,7 +3,6 @@ package lana.thingService.thing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -43,12 +42,9 @@ public class ThingController {
     @PostMapping
     public ResponseEntity<Thing> createThing(@RequestBody Thing thing,
                                              UriComponentsBuilder uriComponentsBuilder) {
-        if (!thingService.find(thing.getId()).isPresent()) {
-            Thing saved = thingService.create(thing);
-            URI uri = uriComponentsBuilder.path("/things/" + saved.getId()).build().toUri();
-            return ResponseEntity.created(uri).body(saved);
-        }
-        return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        Thing saved = thingService.create(thing);
+        URI uri = uriComponentsBuilder.path("/things/" + saved.getId()).build().toUri();
+        return ResponseEntity.created(uri).body(saved);
     }
 
     @PutMapping("/{id}")

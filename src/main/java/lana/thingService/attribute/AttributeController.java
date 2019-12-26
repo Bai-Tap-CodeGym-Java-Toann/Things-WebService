@@ -5,7 +5,6 @@ import lana.thingService.thing.ThingRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -56,9 +55,6 @@ public class AttributeController {
     @PostMapping
     public ResponseEntity<Attribute> createAttribute(@RequestBody Attribute attribute,
                                                      UriComponentsBuilder uriComponentsBuilder) {
-        if (!attributeService.find(attribute.getId()).isPresent()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
         Attribute saved = attributeService.create(attribute);
         URI uri = uriComponentsBuilder.path("/attributes/" + saved.getId()).build().toUri();
         return ResponseEntity.created(uri).body(saved);
