@@ -43,7 +43,7 @@ public class ThingController {
     @PostMapping
     public ResponseEntity<Thing> createThing(@RequestBody Thing thing,
                                              UriComponentsBuilder uriComponentsBuilder) {
-        if (thingService.find(thing.getId()).isPresent()) {
+        if (!thingService.find(thing.getId()).isPresent()) {
             Thing saved = thingService.create(thing);
             URI uri = uriComponentsBuilder.path("/things/" + saved.getId()).build().toUri();
             return ResponseEntity.created(uri).body(saved);

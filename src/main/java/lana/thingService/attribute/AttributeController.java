@@ -56,7 +56,7 @@ public class AttributeController {
     @PostMapping
     public ResponseEntity<Attribute> createAttribute(@RequestBody Attribute attribute,
                                                      UriComponentsBuilder uriComponentsBuilder) {
-        if (attributeService.find(attribute.getId()).isPresent()) {
+        if (!attributeService.find(attribute.getId()).isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
         Attribute saved = attributeService.create(attribute);

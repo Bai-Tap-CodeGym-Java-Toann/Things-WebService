@@ -13,7 +13,6 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "thing")
 public class Thing {
     @Id
     @GeneratedValue
