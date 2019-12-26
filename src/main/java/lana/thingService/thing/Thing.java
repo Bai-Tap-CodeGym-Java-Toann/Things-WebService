@@ -30,4 +30,9 @@ public class Thing {
     // to binding attribute from id.
     @JsonDeserialize(using = AttributeJsonDeserializer.class)
     private Attribute attribute;
+
+    public Thing(String name, Attribute attribute) {
+        this.name = name;
+        this.attribute = attribute;
+    }
 }

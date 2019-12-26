@@ -29,4 +29,9 @@ public class Attribute {
 
     @OneToMany(mappedBy = "attribute")
     private List<Thing> things;
+
+    public Attribute(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
 }
